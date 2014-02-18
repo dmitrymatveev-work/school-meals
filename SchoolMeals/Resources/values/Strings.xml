@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="hello">Hello World, Click Me!</string>
+	<string name="app_name">SchoolMeals</string>
+	<string name="add_or_edit_pupil">Добавить или изменить профиль ученика</string>
+	<string name="remove_pupil">Удалить профиль ученика</string>
+	<string name="add_or_edit_cost">Добавить или изменить цену завтрака</string>
+	<string name="pay">Внести плату</string>
+	<string name="set_presence_and_discount">Отметить присутствующих</string>
+</resources>
