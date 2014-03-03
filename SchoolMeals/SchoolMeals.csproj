@@ -57,6 +57,7 @@
     <Compile Include="DataTypes\FIOComp.cs" />
     <Compile Include="DataTypes\Extensions.cs" />
     <Compile Include="AddOrEditPupilActivity.cs" />
+    <Compile Include="RemovePupil.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -68,6 +69,7 @@
     <AndroidResource Include="Resources\values\Strings.xml" />
     <AndroidResource Include="Resources\drawable\Icon.png" />
     <AndroidResource Include="Resources\layout\AddOrEditPupil.axml" />
+    <AndroidResource Include="Resources\layout\RemovePupil.axml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
   <ItemGroup>

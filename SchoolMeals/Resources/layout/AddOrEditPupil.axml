@@ -3,9 +3,42 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
-    <TextView
-        android:id="@+id/screen2Label"
-        android:layout_width="fill_parent"
+    <Spinner
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello second activity" />
+        android:id="@+id/menu" />
+    <EditText
+        android:inputType="textPersonName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/lastName"
+        android:text="Фамилия"
+        android:hint="Фамилия" />
+    <EditText
+        android:inputType="textPersonName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/firstName"
+        android:text="Имя"
+        android:hint="Имя" />
+    <CheckBox
+        android:text="Льготник"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/isDiscount" />
+    <CheckBox
+        android:text="Изменить"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/edit" />
+    <Button
+        android:text="OK"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/oK" />
+    <Button
+        android:text="Отмена"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/cancel" />
 </LinearLayout>

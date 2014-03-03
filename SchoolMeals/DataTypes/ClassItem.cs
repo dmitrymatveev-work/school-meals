@@ -6,19 +6,37 @@ namespace SchoolMeals
 {
 	public class ClassItem
 	{
+		private static ClassItem _thisObject;
+
 		private SortedList<FIO, SortedList<DateTime, PupilDay>> _pupils;
 		private SortedList<DateTime, Cost> _days;
 
-		public ClassItem()
+		private ClassItem()
 		{
 			if (_pupils == null)
-				_pupils = new SortedList<FIO, SortedList<DateTime, PupilDay>> (new FIOComp());
+				_pupils = new SortedList<FIO, SortedList<DateTime, PupilDay>>();
 			if (_days == null)
-				_days = new SortedList<DateTime, Cost> ();
+				_days = new SortedList<DateTime, Cost>();
+		}
+
+		static ClassItem()
+		{
+			if(_thisObject == null)
+				_thisObject = new ClassItem();
+		}
+
+		public static ClassItem Instance
+		{
+			get
+			{
+				return _thisObject;
+			}
 		}
 
 		public bool AddOrEditPupil(FIO fioOld, FIO fioNew)
 		{
+			if (_pupils.Keys.Any(fio => fio.Equals (fioNew)))
+				return false;
 			if (fioOld == null)
 			{
 				_pupils.Add (fioNew, new SortedList<DateTime, PupilDay> ());
@@ -27,11 +45,13 @@ namespace SchoolMeals
 			else if (_pupils.ContainsKey (fioOld))
 			{
 				var tmpfio = _pupils.Keys.FirstOrDefault (fio => fio.Equals (fioOld));
-				if (tmpfio == null)
+				if (tmpfio == default(FIO))
 					return false;
 				else
 				{
-					tmpfio.Merge (fioNew);
+					var tmpPupilDays = _pupils[tmpfio];
+					_pupils.Remove(tmpfio);
+					_pupils.Add(fioNew, tmpPupilDays);
 					return true;
 				}
 			}
@@ -100,7 +120,7 @@ namespace SchoolMeals
 			{
 				var pupilDayEntry = pupil.Value.FirstOrDefault (p => p.Key.Equals (date));
 				PupilDay pupilDay;
-				if (pupilDayEntry.Equals(null))
+				if (pupilDayEntry.Value == null)
 					pupilDay = new PupilDay { IsDiscount = pupil.Key.IsDiscount };
 				else
 					pupilDay = new PupilDay {

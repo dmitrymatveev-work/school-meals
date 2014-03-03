@@ -30,6 +30,7 @@ namespace SchoolMeals
 				StartActivity(typeof(AddOrEditPupilActivity));
 			};
 			removePupilButton.Click += delegate {
+				StartActivity(typeof(RemovePupil));
 			};
 			addOrEditCostButton.Click += delegate {
 			};
