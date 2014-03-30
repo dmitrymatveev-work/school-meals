@@ -75,7 +75,7 @@ namespace SchoolMeals
 		{
 			var cost = this._days.FirstOrDefault (d => d.Key.Equals(date));
 			KeyValuePair<DateTime, Cost> outCost;
-			if (cost.Equals(null))
+			if (cost.Equals(default(KeyValuePair<DateTime, Cost>)))
 				outCost = new KeyValuePair<DateTime, Cost> (date, new Cost());
 			else
 				outCost = new KeyValuePair<DateTime, Cost> (date, cost.Value);
