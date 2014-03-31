@@ -66,6 +66,12 @@ namespace SchoolMeals
 			// aapt resource value: 0x7f05000f
 			public const int addOrEditPupilButton = 2131034127;
 			
+			// aapt resource value: 0x7f050016
+			public const int amount = 2131034134;
+			
+			// aapt resource value: 0x7f050015
+			public const int amountLabel = 2131034133;
+			
 			// aapt resource value: 0x7f050009
 			public const int cancel = 2131034121;
 			
@@ -74,6 +80,9 @@ namespace SchoolMeals
 			
 			// aapt resource value: 0x7f05000e
 			public const int edit = 2131034126;
+			
+			// aapt resource value: 0x7f050014
+			public const int exit = 2131034132;
 			
 			// aapt resource value: 0x7f05000c
 			public const int firstName = 2131034124;
@@ -111,6 +120,9 @@ namespace SchoolMeals
 			// aapt resource value: 0x7f050000
 			public const int scrollView1 = 2131034112;
 			
+			// aapt resource value: 0x7f050017
+			public const int selectDate = 2131034135;
+			
 			// aapt resource value: 0x7f050013
 			public const int setPresenceAndDiscountButton = 2131034131;
 			
@@ -143,7 +155,13 @@ namespace SchoolMeals
 			public const int Main = 2130903042;
 			
 			// aapt resource value: 0x7f030003
-			public const int RemovePupil = 2130903043;
+			public const int Pay = 2130903043;
+			
+			// aapt resource value: 0x7f030004
+			public const int Presence = 2130903044;
+			
+			// aapt resource value: 0x7f030005
+			public const int RemovePupil = 2130903045;
 			
 			static Layout()
 			{

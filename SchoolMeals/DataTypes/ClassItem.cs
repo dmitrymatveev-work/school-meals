@@ -1,6 +1,9 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
 
 namespace SchoolMeals
 {
@@ -22,7 +25,46 @@ namespace SchoolMeals
 		static ClassItem()
 		{
 			if(_thisObject == null)
+			{
 				_thisObject = new ClassItem();
+				_thisObject.Deserialize();
+			}
+
+		}
+
+		private void Deserialize()
+		{
+			var dataPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+			if(File.Exists(dataPath + "/PupilsDataFile.dat") && File.Exists(dataPath + "/CostDataFile.dat"))
+			{
+				FileStream fsPupils = new FileStream(dataPath + "/PupilsDataFile.dat", FileMode.Open);
+				FileStream fsCost = new FileStream(dataPath + "/CostDataFile.dat", FileMode.Open);
+
+				BinaryFormatter formatter = new BinaryFormatter();
+
+				this._pupils = (SortedList<FIO, SortedList<DateTime, PupilDay>>)formatter.Deserialize(fsPupils);
+				this._days = (SortedList<DateTime, Cost>)formatter.Deserialize(fsCost);
+
+				fsPupils.Close();
+				fsCost.Close();
+			}
+		}
+
+		public void Serialize()
+		{
+			var dataPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+			FileStream fsPupils = new FileStream(dataPath + "/PupilsDataFile.dat", FileMode.Create);
+			FileStream fsCost = new FileStream(dataPath + "/CostDataFile.dat", FileMode.Create);
+
+			BinaryFormatter formatter = new BinaryFormatter();
+
+			formatter.Serialize(fsPupils, this._pupils);
+			formatter.Serialize(fsCost, this._days);
+
+			fsPupils.Close();
+			fsCost.Close();
 		}
 
 		public static ClassItem Instance
@@ -35,8 +77,8 @@ namespace SchoolMeals
 
 		public bool AddOrEditPupil(FIO fioOld, FIO fioNew)
 		{
-			if (_pupils.Keys.Any(fio => fio.Equals (fioNew)))
-				return false;
+			if (_pupils.Keys.Any(fio => fio.Equals (fioNew) && fioNew != null && fio.IsDiscount == fioNew.IsDiscount))
+			 	return false;
 			if (fioOld == null)
 			{
 				_pupils.Add (fioNew, new SortedList<DateTime, PupilDay> ());
@@ -89,6 +131,13 @@ namespace SchoolMeals
 			_days.Add (date, cost);
 		}
 
+		public decimal GetAmount(DateTime date, FIO fio)
+		{
+			if (_pupils.ContainsKey(fio) && this._pupils[fio].ContainsKey(date))
+				return this._pupils[fio][date].Payment;
+			return 0;
+		}
+
 		public bool Pay(DateTime date, FIO fio, decimal payment)
 		{
 			if (_pupils.ContainsKey (fio))
@@ -126,7 +175,8 @@ namespace SchoolMeals
 					pupilDay = new PupilDay {
 						IsDiscount = pupilDayEntry.Value.IsDiscount,
 						Payment = pupilDayEntry.Value.Payment,
-						Presence = pupilDayEntry.Value.Presence
+						Presence = pupilDayEntry.Value.Presence,
+						Comment = pupilDayEntry.Value.Comment
 					};
 
 				var key = new FIO {
@@ -145,7 +195,7 @@ namespace SchoolMeals
 			{
 				var pupil = this._pupils [inListItem.Key];
 				var pupilDay = pupil.FirstOrDefault (p => p.Key.Equals (date));
-				if (pupilDay.Equals(null))
+				if (pupilDay.Equals(default(KeyValuePair<DateTime, PupilDay>)))
 					pupil.Add (date, inListItem.Value);
 				else
 				{
@@ -153,7 +203,8 @@ namespace SchoolMeals
 					pupil.Add(date, new PupilDay{
 						IsDiscount = inListItem.Value.IsDiscount,
 						Payment = inListItem.Value.Payment,
-						Presence = inListItem.Value.Presence
+						Presence = inListItem.Value.Presence,
+						Comment = inListItem.Value.Comment
 					});
 				}
 			}

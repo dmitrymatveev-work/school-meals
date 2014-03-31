@@ -11,16 +11,19 @@ using Android.Widget;
 
 namespace SchoolMeals
 {
-	[Activity (Label = "AddOrEditPupilActivity")]			
-	public class AddOrEditPupilActivity : Activity
+	[Activity (Label = "PayActivity")]			
+	public class PayActivity : Activity
 	{
+		private FIO _currentPupil = default(FIO);
+		private DateTime _dateTime = default(DateTime);
+
 		protected override void OnCreate (Bundle bundle)
 		{
 			var class1 = ClassItem.Instance;
 
 			base.OnCreate (bundle);
 
-			SetContentView (Resource.Layout.AddOrEditPupil);
+			SetContentView (Resource.Layout.Pay);
 
 			var menu = FindViewById<Spinner>(Resource.Id.menu);
 
@@ -35,27 +38,24 @@ namespace SchoolMeals
 			adapter.SetDropDownViewResource (Android.Resource.Layout.SimpleSpinnerDropDownItem);
 			menu.Adapter = adapter;
 
+			var amount = FindViewById<EditText>(Resource.Id.amount);
+
+			var onDateChangedListener = new OnDateChangedListener();
+			onDateChangedListener.DateChanged += (object sender, DateChangedEventArgs e) => {
+				_dateTime = e.DateTime;
+
+				if(this._currentPupil != null && this._dateTime != null)
+					amount.Text = class1.GetAmount(this._dateTime, this._currentPupil).ToString();
+			};
+			var datePicker = FindViewById<DatePicker>(Resource.Id.datePicker1);
+			datePicker.Init(DateTime.Now.Year, DateTime.Now.Month - 1, DateTime.Now.Day, onDateChangedListener);
+
 			Button oK = FindViewById<Button> (Resource.Id.oK);
 			oK.Click += delegate {
-				FIO old = null;
-				var edit = FindViewById<CheckBox>(Resource.Id.edit);
-				if(edit.Checked)
-				{
-					old = new FIO();
-					var pupil = (string)menu.SelectedItem;
-					var pupilSplittedName = pupil.Split('|');
-					old.LastName = pupilSplittedName[0].Trim();
-					old.FirstName = pupilSplittedName[1].Trim();
-					if(pupilSplittedName.Length == 3)
-						old.IsDiscount = pupilSplittedName[2].Trim() == "л";
-				}
-				ClassItem.Instance.AddOrEditPupil(old, new FIO {
-					FirstName = FindViewById<EditText>(Resource.Id.firstName).Text,
-					LastName = FindViewById<EditText>(Resource.Id.lastName).Text,
-					IsDiscount = FindViewById<CheckBox>(Resource.Id.isDiscount).Checked
-				});
+				decimal tempAmount;
 
-				Finish();
+				if(this._currentPupil != null && this._dateTime != null && decimal.TryParse(amount.Text, out tempAmount))
+					class1.Pay(this._dateTime, this._currentPupil, tempAmount);
 			};
 
 			Button cancel = FindViewById<Button> (Resource.Id.cancel);
@@ -66,20 +66,21 @@ namespace SchoolMeals
 
 		private void menu_ItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
 		{
+			var class1 = ClassItem.Instance;
+
 			var menu = (Spinner)sender;
 
 			var pupil = (string)menu.GetItemAtPosition(e.Position);
 			var pupilSplittedName = pupil.Split('|');
 
-			var lastName = FindViewById<EditText>(Resource.Id.lastName);
-			lastName.Text = pupilSplittedName[0].Trim();
-			var firstName = FindViewById<EditText>(Resource.Id.firstName);
-			firstName.Text = pupilSplittedName[1].Trim();
-			if(pupilSplittedName.Length == 3)
-			{
-				var discount = FindViewById<CheckBox>(Resource.Id.isDiscount);
-				discount.Checked = pupilSplittedName[2].Trim() == "л";
-			}
+			this._currentPupil = new FIO{
+				FirstName = pupilSplittedName[1].Trim(),
+				LastName = pupilSplittedName[0].Trim()
+			};
+
+			var amount = FindViewById<EditText>(Resource.Id.amount);
+			if(this._currentPupil != null && this._dateTime != null)
+				amount.Text = class1.GetAmount(this._dateTime, this._currentPupil).ToString();
 		}
 	}
 }

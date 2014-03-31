@@ -25,20 +25,35 @@ namespace SchoolMeals
 			Button addOrEditCostButton = FindViewById<Button> (Resource.Id.addOrEditCostButton);
 			Button payCostButton = FindViewById<Button> (Resource.Id.payCostButton);
 			Button setPresenceAndDiscountButton = FindViewById<Button> (Resource.Id.setPresenceAndDiscountButton);
-			
+			Button exitButton = FindViewById<Button> (Resource.Id.exit);
+
 			addOrEditPupilButton.Click += delegate {
 				StartActivity(typeof(AddOrEditPupilActivity));
 			};
 			removePupilButton.Click += delegate {
-				StartActivity(typeof(RemovePupil));
+				StartActivity(typeof(RemovePupilActivity));
 			};
 			addOrEditCostButton.Click += delegate {
 				StartActivity(typeof(AddOrEditCostActivity));
 			};
 			payCostButton.Click += delegate {
+				StartActivity(typeof(PayActivity));
 			};
 			setPresenceAndDiscountButton.Click += delegate {
+				StartActivity(typeof(PresenceActivity));
 			};
+
+			exitButton.Click += delegate {
+				Finish();
+			};
+		}
+
+		protected override void OnDestroy ()
+		{
+			var class1 = ClassItem.Instance;
+			class1.Serialize();
+
+			base.OnDestroy ();
 		}
 	}
 }

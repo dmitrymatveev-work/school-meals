@@ -57,10 +57,13 @@
     <Compile Include="DataTypes\FIOComp.cs" />
     <Compile Include="DataTypes\Extensions.cs" />
     <Compile Include="AddOrEditPupilActivity.cs" />
-    <Compile Include="RemovePupil.cs" />
     <Compile Include="AddOrEditCostActivity.cs" />
     <Compile Include="DataTypes\DateChangedEventArgs.cs" />
     <Compile Include="DataTypes\OnDateChangedListener.cs" />
+    <Compile Include="PayActivity.cs" />
+    <Compile Include="RemovePupilActivity.cs" />
+    <Compile Include="PresenceActivity.cs" />
+    <Compile Include="DataTypes\PresenceList.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -74,6 +77,8 @@
     <AndroidResource Include="Resources\layout\AddOrEditPupil.axml" />
     <AndroidResource Include="Resources\layout\RemovePupil.axml" />
     <AndroidResource Include="Resources\layout\AddOrEditCost.axml" />
+    <AndroidResource Include="Resources\layout\Pay.axml" />
+    <AndroidResource Include="Resources\layout\Presence.axml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
   <ItemGroup>

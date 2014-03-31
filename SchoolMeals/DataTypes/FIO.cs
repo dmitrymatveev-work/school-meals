@@ -2,6 +2,7 @@ using System;
 
 namespace SchoolMeals
 {
+	[Serializable]
 	public class FIO : IComparable
 	{
 		public string FirstName { get; set; }

@@ -28,4 +28,9 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="@string/set_presence_and_discount" />
+    <Button
+        android:text="Выйти"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/exit" />
 </LinearLayout>
