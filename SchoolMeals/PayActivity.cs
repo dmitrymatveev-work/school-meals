@@ -39,6 +39,11 @@ namespace SchoolMeals
 			menu.Adapter = adapter;
 
 			var amount = FindViewById<EditText>(Resource.Id.amount);
+			amount.FocusChange += (object sender, View.FocusChangeEventArgs e) => {
+				var currentSender = sender as EditText;
+				if(e.HasFocus && currentSender != null)
+					currentSender.Text = string.Empty;
+			};
 
 			var onDateChangedListener = new OnDateChangedListener();
 			onDateChangedListener.DateChanged += (object sender, DateChangedEventArgs e) => {
@@ -49,6 +54,7 @@ namespace SchoolMeals
 			};
 			var datePicker = FindViewById<DatePicker>(Resource.Id.datePicker1);
 			datePicker.Init(DateTime.Now.Year, DateTime.Now.Month - 1, DateTime.Now.Day, onDateChangedListener);
+			this._dateTime = DateTime.Today;
 
 			Button oK = FindViewById<Button> (Resource.Id.oK);
 			oK.Click += delegate {

@@ -25,6 +25,7 @@ namespace SchoolMeals
 			Button addOrEditCostButton = FindViewById<Button> (Resource.Id.addOrEditCostButton);
 			Button payCostButton = FindViewById<Button> (Resource.Id.payCostButton);
 			Button setPresenceAndDiscountButton = FindViewById<Button> (Resource.Id.setPresenceAndDiscountButton);
+			Button balance = FindViewById<Button> (Resource.Id.balance);
 			Button exitButton = FindViewById<Button> (Resource.Id.exit);
 
 			addOrEditPupilButton.Click += delegate {
@@ -41,6 +42,9 @@ namespace SchoolMeals
 			};
 			setPresenceAndDiscountButton.Click += delegate {
 				StartActivity(typeof(PresenceActivity));
+			};
+			balance.Click += delegate {
+				StartActivity(typeof(BalanceActivity));
 			};
 
 			exitButton.Click += delegate {

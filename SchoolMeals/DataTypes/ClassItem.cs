@@ -34,7 +34,9 @@ namespace SchoolMeals
 
 		private void Deserialize()
 		{
-			var dataPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+			// var dataPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+			var dataPath = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads)
+			               + "/../Documents/SchoolMeals";
 
 			if(File.Exists(dataPath + "/PupilsDataFile.dat") && File.Exists(dataPath + "/CostDataFile.dat"))
 			{
@@ -53,7 +55,8 @@ namespace SchoolMeals
 
 		public void Serialize()
 		{
-			var dataPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+			var dataPath = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads)
+			               + "/../Documents/SchoolMeals";
 
 			FileStream fsPupils = new FileStream(dataPath + "/PupilsDataFile.dat", FileMode.Create);
 			FileStream fsCost = new FileStream(dataPath + "/CostDataFile.dat", FileMode.Create);
@@ -140,7 +143,7 @@ namespace SchoolMeals
 
 		public bool Pay(DateTime date, FIO fio, decimal payment)
 		{
-			if (_pupils.ContainsKey (fio))
+			if (this._pupils.ContainsKey (fio))
 			{
 				var pupil = this._pupils [fio];
 				if (pupil.ContainsKey (date))
@@ -153,7 +156,7 @@ namespace SchoolMeals
 					pupil.Add (date, new PupilDay {
 						Payment = payment,
 						Presence = true,
-						IsDiscount = fio.IsDiscount
+						IsDiscount = this._pupils.First(pupilItem => pupilItem.Key.Equals(fio)).Key.IsDiscount
 					});
 				}
 				return true;
@@ -202,12 +205,40 @@ namespace SchoolMeals
 					pupil.Remove(date);
 					pupil.Add(date, new PupilDay{
 						IsDiscount = inListItem.Value.IsDiscount,
-						Payment = inListItem.Value.Payment,
+						Payment = pupilDay.Value.Payment,
 						Presence = inListItem.Value.Presence,
 						Comment = inListItem.Value.Comment
 					});
 				}
 			}
+		}
+
+		public SortedList<FIO, decimal> Calculate()
+		{
+			var output = new SortedList<FIO, decimal>();
+
+			foreach(var pupilProfile in this._pupils)
+			{
+				decimal balance = 0;
+
+				foreach(var pupilDayEntry in pupilProfile.Value)
+				{
+					balance += pupilDayEntry.Value.Payment;
+
+					if(pupilDayEntry.Value.Presence)
+					{
+						var cost = this._days.FirstOrDefault(day => day.Key.Equals(pupilDayEntry.Key));
+						if(!cost.Equals(default(KeyValuePair<DateTime, Cost>)))
+						{
+							balance -= pupilDayEntry.Value.IsDiscount ? cost.Value.WithDiscount : cost.Value.Normal;
+						}
+					}
+				}
+
+				output.Add(pupilProfile.Key, balance);
+			}
+
+			return output;
 		}
 	}
 }

@@ -62,6 +62,20 @@ namespace SchoolMeals
 			cancel.Click += delegate {
 				Finish();
 			};
+
+			var lastName = FindViewById<EditText>(Resource.Id.lastName);
+			lastName.FocusChange += (object sender, View.FocusChangeEventArgs e) => {
+				var currentSender = sender as EditText;
+				if(e.HasFocus && currentSender != null)
+					currentSender.Text = string.Empty;
+			};
+
+			var firstName = FindViewById<EditText>(Resource.Id.firstName);
+			firstName.FocusChange += (object sender, View.FocusChangeEventArgs e) => {
+				var currentSender = sender as EditText;
+				if(e.HasFocus && currentSender != null)
+					currentSender.Text = string.Empty;
+			};
 		}
 
 		private void menu_ItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)

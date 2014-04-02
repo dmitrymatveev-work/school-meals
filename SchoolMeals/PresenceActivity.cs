@@ -51,6 +51,8 @@ namespace SchoolMeals
 
 					class1.SetPresenceAndDiscount(this._date, inList);
 				}
+
+				Finish();
 			};
 
 			Button cancel = FindViewById<Button> (Resource.Id.cancel);
@@ -97,7 +99,7 @@ namespace SchoolMeals
 
 				var name = new TextView(this);
 				name.SetWidth(150);
-				name.Text = pupilItem.Key.LastName + pupilItem.Key.FirstName.Substring(0,1);
+				name.Text = pupilItem.Key.LastName + ((pupilItem.Key.FirstName.Length > 0) ? pupilItem.Key.FirstName.Substring(0,1) : string.Empty);
 
 				var presence = new CheckBox(this);
 				presence.Checked = pupilItem.Value.Presence;

@@ -26,13 +26,15 @@ namespace SchoolMeals
 			var withDiscount = FindViewById<EditText>(Resource.Id.withDiscount);
 
 			normalCost.FocusChange += (object sender, View.FocusChangeEventArgs e) => {
-				if(e.HasFocus)
-					normalCost.Text = string.Empty;
+				var currentSender = sender as EditText;
+				if(e.HasFocus && currentSender != null)
+					currentSender.Text = string.Empty;
 			};
 
 			withDiscount.FocusChange += (object sender, View.FocusChangeEventArgs e) => {
-				if(e.HasFocus)
-					withDiscount.Text = string.Empty;
+				var currentSender = sender as EditText;
+				if(e.HasFocus && currentSender != null)
+					currentSender.Text = string.Empty;
 			};
 
 			var onDateChangedListener = new OnDateChangedListener();
@@ -51,12 +53,18 @@ namespace SchoolMeals
 				if(decimal.TryParse(normalCost.Text, out tempNormalCost) && decimal.TryParse(withDiscount.Text, out tempWithDiscount))
 					class1.AddOrEditCost(datePicker.DateTime,
 						new Cost{ Normal = tempNormalCost, WithDiscount = tempWithDiscount });
+
+				Finish();
 			};
 
 			Button cancel = FindViewById<Button> (Resource.Id.cancel);
 			cancel.Click += delegate {
 				Finish();
 			};
+
+			var tmpCost = class1.GetCost(DateTime.Today).Value;
+			normalCost.Text = tmpCost.Normal.ToString();
+			withDiscount.Text = tmpCost.WithDiscount.ToString();
 		}
 	}
 }

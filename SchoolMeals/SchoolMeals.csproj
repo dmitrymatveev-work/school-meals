@@ -64,6 +64,7 @@
     <Compile Include="RemovePupilActivity.cs" />
     <Compile Include="PresenceActivity.cs" />
     <Compile Include="DataTypes\PresenceList.cs" />
+    <Compile Include="BalanceActivity.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -79,6 +80,7 @@
     <AndroidResource Include="Resources\layout\AddOrEditCost.axml" />
     <AndroidResource Include="Resources\layout\Pay.axml" />
     <AndroidResource Include="Resources\layout\Presence.axml" />
+    <AndroidResource Include="Resources\layout\Balance.axml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
   <ItemGroup>
