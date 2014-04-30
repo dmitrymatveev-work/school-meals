@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
+using System.Threading;
 
 namespace SchoolMeals
 {
@@ -28,8 +29,19 @@ namespace SchoolMeals
 			{
 				_thisObject = new ClassItem();
 				_thisObject.Deserialize();
-			}
 
+				ThreadPool.QueueUserWorkItem(delegate {
+					while(true)
+					{
+						var date = DateTime.Now;
+						var dateStr = date.ToString("yyyy_MM_dd-HH_mm_ss");
+
+						_thisObject.Serialize(dateStr + "-");
+						var minutes = 30;
+						Thread.Sleep(minutes * 60 * 1000);
+					}
+				});
+			}
 		}
 
 		private void Deserialize()
@@ -40,8 +52,8 @@ namespace SchoolMeals
 
 			if(File.Exists(dataPath + "/PupilsDataFile.dat") && File.Exists(dataPath + "/CostDataFile.dat"))
 			{
-				FileStream fsPupils = new FileStream(dataPath + "/PupilsDataFile.dat", FileMode.Open);
-				FileStream fsCost = new FileStream(dataPath + "/CostDataFile.dat", FileMode.Open);
+				var fsPupils = new FileStream(dataPath + "/PupilsDataFile.dat", FileMode.Open);
+				var fsCost = new FileStream(dataPath + "/CostDataFile.dat", FileMode.Open);
 
 				BinaryFormatter formatter = new BinaryFormatter();
 
@@ -53,13 +65,19 @@ namespace SchoolMeals
 			}
 		}
 
-		public void Serialize()
+		public void Serialize(string appendToFileName)
 		{
 			var dataPath = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads)
 			               + "/../Documents/SchoolMeals";
 
-			FileStream fsPupils = new FileStream(dataPath + "/PupilsDataFile.dat", FileMode.Create);
-			FileStream fsCost = new FileStream(dataPath + "/CostDataFile.dat", FileMode.Create);
+			if(!Directory.Exists(dataPath))
+				Directory.CreateDirectory(dataPath);
+
+			string append = string.Empty;
+			if(!string.IsNullOrEmpty(appendToFileName))
+				append = appendToFileName;
+			var fsPupils = new FileStream(dataPath + "/" + append + "PupilsDataFile.dat", FileMode.Create);
+			var fsCost = new FileStream(dataPath + "/" + append + "CostDataFile.dat", FileMode.Create);
 
 			BinaryFormatter formatter = new BinaryFormatter();
 
@@ -68,6 +86,140 @@ namespace SchoolMeals
 
 			fsPupils.Close();
 			fsCost.Close();
+		}
+
+		private void WriteString(FileStream stream, int codePage, string dataString)
+		{
+			if(dataString != null && stream.CanWrite)
+			{
+				var encoder = System.Text.Encoding.GetEncoding(codePage);
+				var data = encoder.GetBytes(dataString);
+				stream.Write(data, 0, data.Length);
+			}
+		}
+
+		public void FormReport(DateTime startDate, DateTime endDate)
+		{
+			var cp = 1251;
+
+			var dataPath = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads)
+			               + "/../Documents/SchoolMeals";
+
+			if(!Directory.Exists(dataPath))
+				Directory.CreateDirectory(dataPath);
+
+			using(var report = new FileStream(dataPath + "/" + "Report(full) - " + DateTime.Today.ToString("yyyy_MM_dd") + ".csv", FileMode.Create))
+			{
+				this.WriteString(report, cp, ";");
+				for(var date = startDate; date <= endDate; date = date.AddDays(1))
+				{
+					if(this._days.ContainsKey(date))
+					{
+						var withDiscount = this._days[date].WithDiscount;
+						this.WriteString(report, cp, withDiscount == 0 ? string.Empty : withDiscount.ToString());
+					}
+
+					this.WriteString(report, cp, ";");
+				}
+				this.WriteString(report, cp, Environment.NewLine);
+
+				this.WriteString(report, cp, ";");
+				for(var date = startDate; date <= endDate; date = date.AddDays(1))
+				{
+					if(this._days.ContainsKey(date))
+					{
+						var normal = this._days[date].Normal;
+						this.WriteString(report, cp, normal == 0 ? string.Empty : normal.ToString());
+					}
+
+					this.WriteString(report, cp, ";");
+				}
+				this.WriteString(report, cp, Environment.NewLine);
+
+				this.WriteString(report, cp, ";");
+				for(var date = startDate; date <= endDate; date = date.AddDays(1))
+				{
+					this.WriteString(report, cp, date.Date.ToString("dd MMMMM yyyy") + ";");
+				}
+				this.WriteString(report, cp, Environment.NewLine);
+
+				foreach(var pupil in this._pupils)
+				{
+					var pupilName = string.Format("{0} {1}{2}{3}", pupil.Key.LastName,
+						pupil.Key.FirstName.Length > 0 ? pupil.Key.FirstName.Substring(0,1) : string.Empty, pupil.Key.IsDiscount ? " л." : string.Empty,
+						";");
+					this.WriteString(report, cp, pupilName);
+
+					for(var date = startDate; date <= endDate; date = date.AddDays(1))
+					{
+						if(pupil.Value.ContainsKey(date))
+							this.WriteString(report, cp, pupil.Value[date].Presence ? "+" : "н");
+
+						this.WriteString(report, cp, ";");
+					}
+					this.WriteString(report, cp, Environment.NewLine);
+
+					this.WriteString(report, cp, ";");
+					for(var date = startDate; date <= endDate; date = date.AddDays(1))
+					{
+						if(pupil.Value.ContainsKey(date))
+							this.WriteString(report, cp, pupil.Value[date].Comment != null ? pupil.Value[date].Comment.Replace(Environment.NewLine, " ") : string.Empty);
+
+						this.WriteString(report, cp, ";");
+					}
+					this.WriteString(report, cp, Environment.NewLine);
+
+					this.WriteString(report, cp, ";");
+					for(var date = startDate; date <= endDate; date = date.AddDays(1))
+					{
+						if(pupil.Value.ContainsKey(date))
+						{
+							var payment = pupil.Value[date].Payment;
+							this.WriteString(report, cp, payment == 0 ? string.Empty : payment.ToString());
+						}
+
+						this.WriteString(report, cp, ";");
+					}
+					this.WriteString(report, cp, Environment.NewLine);
+
+					this.WriteString(report, cp, ";");
+					for(var date = startDate; date <= endDate; date = date.AddDays(1))
+					{
+						if(pupil.Value.ContainsKey(date))
+							this.WriteString(report, cp, pupil.Value[date].IsDiscount ? " л." : string.Empty);
+
+						this.WriteString(report, cp, ";");
+					}
+					this.WriteString(report, cp, Environment.NewLine);
+				}
+			}
+
+			using(var report = new FileStream(dataPath + "/" + "Report(presence) - " + DateTime.Today.ToString("yyyy_MM_dd") + ".csv", FileMode.Create))
+			{
+				this.WriteString(report, cp, ";");
+				for(var date = startDate; date <= endDate; date = date.AddDays(1))
+				{
+					this.WriteString(report, cp, date.Date.ToString("dd MMMMM yyyy") + ";");
+				}
+				this.WriteString(report, cp, Environment.NewLine);
+
+				foreach(var pupil in this._pupils)
+				{
+					var pupilName = string.Format("{0} {1}{2}{3}", pupil.Key.LastName,
+						pupil.Key.FirstName.Length > 0 ? pupil.Key.FirstName.Substring(0,1) : string.Empty, pupil.Key.IsDiscount ? " л." : string.Empty,
+						";");
+					this.WriteString(report, cp, pupilName);
+
+					for(var date = startDate; date <= endDate; date = date.AddDays(1))
+					{
+						if(pupil.Value.ContainsKey(date))
+							this.WriteString(report, cp, pupil.Value[date].Presence ? "+" : "н");
+
+						this.WriteString(report, cp, ";");
+					}
+					this.WriteString(report, cp, Environment.NewLine);
+				}
+			}
 		}
 
 		public static ClassItem Instance
@@ -84,8 +236,13 @@ namespace SchoolMeals
 			 	return false;
 			if (fioOld == null)
 			{
-				_pupils.Add (fioNew, new SortedList<DateTime, PupilDay> ());
-				return true;
+				if(!_pupils.ContainsKey(fioNew))
+				{
+					_pupils.Add (fioNew, new SortedList<DateTime, PupilDay> ());
+					return true;
+				}
+				else
+					return false;
 			}
 			else if (_pupils.ContainsKey (fioOld))
 			{

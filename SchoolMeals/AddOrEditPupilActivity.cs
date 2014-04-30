@@ -67,14 +67,32 @@ namespace SchoolMeals
 			lastName.FocusChange += (object sender, View.FocusChangeEventArgs e) => {
 				var currentSender = sender as EditText;
 				if(e.HasFocus && currentSender != null)
-					currentSender.Text = string.Empty;
+				{
+					if(currentSender.Text == "Фамилия")
+						currentSender.Text = string.Empty;
+//					if((FindViewById<EditText>(Resource.Id.lastName)).Text != "Фамилия"
+//						|| (FindViewById<EditText>(Resource.Id.firstName)).Text != "Имя")
+//					{
+//						var edit = FindViewById<CheckBox>(Resource.Id.edit);
+//						edit.Checked = !edit.Checked;
+//					}
+				}
 			};
 
 			var firstName = FindViewById<EditText>(Resource.Id.firstName);
 			firstName.FocusChange += (object sender, View.FocusChangeEventArgs e) => {
 				var currentSender = sender as EditText;
 				if(e.HasFocus && currentSender != null)
-					currentSender.Text = string.Empty;
+				{
+					if(currentSender.Text == "Имя")
+						currentSender.Text = string.Empty;
+//					if((FindViewById<EditText>(Resource.Id.lastName)).Text != "Фамилия"
+//						|| (FindViewById<EditText>(Resource.Id.firstName)).Text != "Имя")
+//					{
+//						var edit = FindViewById<CheckBox>(Resource.Id.edit);
+//						edit.Checked = !edit.Checked;
+//					}
+				}
 			};
 		}
 

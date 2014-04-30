@@ -34,6 +34,11 @@
         android:layout_height="wrap_content"
         android:id="@+id/balance" />
     <Button
+        android:text="Сформировать отчет"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/report" />
+    <Button
         android:text="Выйти"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

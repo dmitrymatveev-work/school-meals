@@ -41,7 +41,7 @@ namespace SchoolMeals
 			var amount = FindViewById<EditText>(Resource.Id.amount);
 			amount.FocusChange += (object sender, View.FocusChangeEventArgs e) => {
 				var currentSender = sender as EditText;
-				if(e.HasFocus && currentSender != null)
+				if(e.HasFocus && currentSender != null && currentSender.Text == "0")
 					currentSender.Text = string.Empty;
 			};
 
