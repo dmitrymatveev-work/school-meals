@@ -1,0 +1,1 @@
+Xamarin.Android app for a management of paid school meals. Users of the app are classroom teachers who need to collect money for paid school meals from pupils and account the remainder according to pupil’s absence and a meal cost.
